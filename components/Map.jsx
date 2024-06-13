@@ -141,7 +141,7 @@ function Map() {
       ></div>
       <button
         onClick={handleGetLocation}
-        className="bg-slate-600 rounded-full absolute right-[2%] bottom-[30px] z-10"
+        className="bg-slate-600 rounded-full absolute right-[14px] bottom-[50px] z-10"
       >
         📍
       </button>
