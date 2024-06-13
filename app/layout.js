@@ -4,6 +4,7 @@ import "./globals.css";
 import { useState } from "react";
 import Header from "@/components/Header";
 import Foot from "@/components/Home/Foot";
+import { Analytics } from '@vercel/analytics/react';
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
         <Header theme={theme} setTheme={setTheme} />
         {children}
         <Foot />
+        <Analytics />
       </body>
     </html>
   );
