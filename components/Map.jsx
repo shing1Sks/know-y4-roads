@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -10,6 +10,7 @@ import ReactDOMServer from "react-dom/server";
 function Map() {
   const [markers, setMarkers] = useState([]);
   const [map, setMap] = useState(null);
+  const markerRef = useRef(null);
 
   const getMarkers = async () => {
     const res = await getRoads();
@@ -66,17 +67,55 @@ function Map() {
     }
   }, []);
 
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lng = position.coords.longitude;
+          const lat = position.coords.latitude;
+          if (map) {
+            map.flyTo({
+              center: [lng, lat],
+              essential: true,
+            });
+            if (markerRef.current) {
+              markerRef.current.remove();
+            }
+            const newMarker = new mapboxgl.Marker({
+              color: "#FF0000",
+            })
+              .setLngLat([lng, lat])
+              .addTo(map);
+            markerRef.current = newMarker;
+          }
+        },
+        () => {
+          alert("Unable to retrieve your location");
+        }
+      );
+    }
+  };
+
   useEffect(() => {
     if (map && markers.length > 0) {
       markers.forEach((marker) => {
         const popupContent = (
           <div className="w-full h-[200px] overflow-auto flex flex-col items-center justify-center text-red-700 bg-slate-300">
             <p className="text-black text-center text-xl">{marker.condition}</p>
-            <p className="text-black text-justify text-lg">{marker.description}</p>
+            <p className="text-black text-justify text-lg">
+              {marker.description}
+            </p>
             {marker.images.map((img, index) => (
-              <img key={index} src={img} className="w-[100px]" alt="road condition" />
+              <img
+                key={index}
+                src={img}
+                className="w-[100px]"
+                alt="road condition"
+              />
             ))}
-            <p className="text-black text-center text-sm">{new Date(marker.createdAt).toLocaleString()}</p>
+            <p className="text-black text-center text-sm">
+              {new Date(marker.createdAt).toLocaleString()}
+            </p>
           </div>
         );
 
@@ -100,6 +139,12 @@ function Map() {
         id="map"
         className="absolute border-2 border-blue-800 rounded-md dark:border-gray-600 top-0 left-0 w-full h-full"
       ></div>
+      <button
+        onClick={handleGetLocation}
+        className="bg-slate-600 rounded-full absolute right-[2%] bottom-[30px] z-10"
+      >
+        📍
+      </button>
     </div>
   );
 }
