@@ -101,7 +101,7 @@ function Map() {
       markers.forEach((marker) => {
         const popupContent = (
           <div className="w-full h-[200px] overflow-auto flex flex-col items-center justify-center text-red-700 bg-slate-300">
-            <p className="text-black text-center text-xl">{marker.condition}</p>
+            <p className="text-black text-center text-xl pt-10">{marker.condition}</p>
             <p className="text-black text-justify text-lg">
               {marker.description}
             </p>
